@@ -1,7 +1,0 @@
-# Simple E-Commerce Auth App
-
-A simple user registration and login system built with:
-
-- **FastAPI** as the backend
-- **Streamlit** as the frontend
-- **In-memory fake DB** (for demo)
