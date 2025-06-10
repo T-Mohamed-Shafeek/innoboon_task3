@@ -63,14 +63,15 @@ async def validation_exception_handler(request, exc):
 
 # Auth endpoints
 @app.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreate):
+async def register(user: UserCreate, is_admin: bool = False):
     if await get_user_by_email(user.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    return await create_user(user)
+    return await create_user(user, is_admin)
 
+# The token is created only when the user logs in.
 @app.post("/login", status_code=status.HTTP_200_OK)
 async def login(user: UserLogin):
     db_user = await get_user_by_email(user.email)
@@ -80,7 +81,10 @@ async def login(user: UserLogin):
             detail="Invalid credentials"
         )
     token = create_access_token({"user_id": db_user["id"], "email": db_user["email"]})
-    return {"access_token": token, "token_type": "bearer"}
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
 
 @app.get("/me", response_model=UserOut)
 async def get_me(current_user: dict = Depends(get_current_user)):

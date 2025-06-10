@@ -3,12 +3,12 @@ from typing import List
 import os
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "sqlite:///./test.db"
-    SECRET_KEY: str = "your-secret-key-here"  # In production, this should be set via environment variable
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/ecommerce_db"
+    SECRET_KEY: str = "9f82bfcaf183c7a8fd66f9e476e0db3b6cc9d99325c6a30c61a4e8d65b3b1c75"  # In production, this should be set via environment variable
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_ORIGINS: str = "http://localhost:8501"
-    API_URL: str = "http://localhost:8000"  # Add this field
+    API_URL: str = "http://localhost:8000" 
     
     @property
     def origins(self) -> List[str]:
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,
-        extra="allow"  # Allow extra fields
+        extra="allow" 
     )
 
 settings = Settings() 

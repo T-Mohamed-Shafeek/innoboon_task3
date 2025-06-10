@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Get database URL from environment variable
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost/ecommerce")
+# Getting database URL from .env file
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Create tables
 def create_tables():

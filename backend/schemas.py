@@ -3,11 +3,12 @@ Pydantic models for request/response validation.
 This module defines the data validation schemas used throughout the application.
 """
 
-from pydantic import BaseModel, EmailStr, Field, validator
-from typing import List, Optional
-from datetime import datetime
-import re
+from pydantic import BaseModel, EmailStr, Field, validator # For data and email validation
+from typing import List, Optional # For type hinting
+from datetime import datetime # For date and time
+import re # For regular expressions
 
+# This is a list of all the schemas/classes that can be imported from this module
 __all__ = ['UserCreate', 'UserLogin', 'UserOut', 'ProductBase', 'ProductCreate', 'ProductUpdate', 'ProductOut', 'OrderItemBase', 'OrderItemCreate', 'OrderItemOut', 'OrderCreate', 'OrderOut']
 
 class UserBase(BaseModel):
@@ -34,11 +35,12 @@ class UserLogin(BaseModel):
 class UserOut(UserBase):
     """Schema for user response data."""
     id: int
-    is_admin: int = Field(0, ge=0, le=1)
+    is_admin: int = Field(default=0, ge=0, le=1)
 
-    class Config:
+    class Config: # Allows the model to be used with SQLAlchemy models
         from_attributes = True
 
+# Category schemas
 class CategoryBase(BaseModel):
     """Base category schema with common attributes."""
     name: str = Field(..., min_length=2, max_length=50)
@@ -57,6 +59,7 @@ class CategoryOut(CategoryBase):
     """Schema for category response data."""
     id: int
 
+# Product schemas
 class ProductBase(BaseModel):
     """Base product schema with common attributes."""
     name: str = Field(..., min_length=2, max_length=100)
@@ -79,6 +82,7 @@ class ProductOut(ProductBase):
     id: int
     category: Optional[CategoryOut] = None
 
+# Order item schemas
 class OrderItemBase(BaseModel):
     """Base order item schema with common attributes."""
     product_id: int = Field(..., gt=0)
@@ -93,6 +97,7 @@ class OrderItemOut(OrderItemBase):
     id: int
     price: float = Field(..., gt=0)
 
+# Order schemas
 class OrderCreate(BaseModel):
     """Schema for order creation."""
     items: List[OrderItemCreate] = Field(..., min_items=1)

@@ -3,6 +3,7 @@ Database models for the e-commerce application.
 This module defines the SQLAlchemy models that represent the database tables.
 """
 
+# The ORM 
 from sqlalchemy import Table, Column, Integer, String, MetaData, Float, ForeignKey, DateTime, Enum
 from datetime import datetime
 
@@ -36,9 +37,7 @@ products = Table(
     Column("price", Float, nullable=False, comment="Product price"),
     Column("stock", Integer, nullable=False, comment="Available stock"),
     Column("image_url", String, comment="URL to product image"),
-    Column(
-        "category_id",
-        Integer,
+    Column("category_id", Integer,
         ForeignKey("categories.id", ondelete="CASCADE"),
         nullable=False,
         comment="Foreign key to categories table"

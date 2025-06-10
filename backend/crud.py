@@ -6,19 +6,30 @@ from datetime import datetime
 from sqlalchemy import select
 
 # User operations
-async def create_user(user: UserCreate):
+async def create_user(user: UserCreate, is_admin: bool = False):
     hashed_password = get_password_hash(user.password)
     query = users.insert().values(
         name=user.name,
         email=user.email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        is_admin=1 if is_admin else 0
     )
     user_id = await database.execute(query)
-    return {**user.dict(), "id": user_id, "is_admin": 0}
+    return {**user.dict(), "id": user_id, "is_admin": 1 if is_admin else 0}
 
 async def get_user_by_email(email: str):
     query = users.select().where(users.c.email == email)
-    return await database.fetch_one(query)
+    result = await database.fetch_one(query)
+    if result:
+        # Ensure is_admin is an integer
+        return {
+            "id": result["id"],
+            "name": result["name"],
+            "email": result["email"],
+            "hashed_password": result["hashed_password"],
+            "is_admin": result["is_admin"] if result["is_admin"] is not None else 0
+        }
+    return None
 
 # Category operations
 async def create_category(category: CategoryCreate):
@@ -195,6 +206,7 @@ async def get_order(order_id: int):
     
     return {**dict(order), "items": [dict(item) for item in items]}
 
+
 async def get_user_orders(user_id: int):
     # Get all orders for the user
     query = orders.select().where(orders.c.user_id == user_id)
@@ -217,6 +229,7 @@ async def get_user_orders(user_id: int):
     
     return result
 
+# Update order status
 async def update_order_status(order_id: int, status: str):
     query = orders.update().where(orders.c.id == order_id).values(
         status=status,
